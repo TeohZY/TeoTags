@@ -686,3 +686,107 @@
   text-align: start !important;
   text-align-last: start !important;
 }
+
+.tabs {
+  position: relative;
+  margin: 0 0 20px;
+  border-right: 1px solid var(--tab-border-color);
+  border-bottom: 1px solid var(--tab-border-color);
+  border-left: 1px solid var(--tab-border-color)
+}
+
+.tabs>.nav-tabs {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-lines: multiple;
+  -moz-box-lines: multiple;
+  -o-box-lines: multiple;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  background: var(--tab-botton-bg)
+}
+
+.tabs>.nav-tabs>.tab {
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -o-box-flex: 1;
+  -ms-box-flex: 1;
+  box-flex: 1;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+  padding: 8px 18px;
+  border-top: 2px solid var(--tab-border-color);
+  background: var(--tab-botton-bg);
+  color: var(--tab-botton-color);
+  line-height: 2;
+  -webkit-transition: all .4s;
+  -moz-transition: all .4s;
+  -o-transition: all .4s;
+  -ms-transition: all .4s;
+  transition: all .4s
+}
+
+.tabs>.nav-tabs>.tab i {
+  width: 1.5em
+}
+
+.tabs>.nav-tabs>.tab.active {
+  border-top: 2px solid #49b1f5;
+  background: var(--tab-button-active-bg);
+  cursor: default
+}
+
+.tabs>.nav-tabs>.tab:not(.active):hover {
+  border-top: 2px solid var(--tab-button-hover-bg);
+  background: var(--tab-button-hover-bg)
+}
+
+.tabs>.nav-tabs.no-default~.tab-to-top {
+  display: none
+}
+
+.tabs>.tab-contents .tab-item-content {
+  position: relative;
+  display: none;
+  padding: 36px 24px 10px
+}
+
+@media screen and (max-width: 768px) {
+  .tabs>.tab-contents .tab-item-content {
+      padding:24px 14px
+  }
+}
+
+.tabs>.tab-contents .tab-item-content.active {
+  display: block;
+  -webkit-animation: tabshow .5s;
+  -moz-animation: tabshow .5s;
+  -o-animation: tabshow .5s;
+  -ms-animation: tabshow .5s;
+  animation: tabshow .5s
+}
+
+.tabs>.tab-contents .tab-item-content>:last-child {
+  margin-bottom: 0
+}
+
+.tabs>.tab-to-top {
+  padding: 0 16px 10px 0;
+  width: 100%;
+  text-align: right
+}
+
+.tabs>.tab-to-top button {
+  color: #99a9bf
+}
+
+.tabs>.tab-to-top button:hover {
+  color: #49b1f5
+}

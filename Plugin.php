@@ -127,6 +127,38 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         </a></div>";
         }, $content);
 
+        // tables 
+
+        $content = preg_replace_callback(
+            '/\{% tabs (.*?) %\}(.*?)\{% endtabs %\}/is',
+            function ($matches) {
+                [$fullMatch, $tabInfo, $tabBlocks] = $matches;
+                $tabInfoParts = explode(',', $tabInfo);
+                $tabId = trim($tabInfoParts[0]); // 如："test2"
+                $tabCount = trim($tabInfoParts[1]); // 如："3"
+    
+                // 生成tabs的导航按钮
+                $tabsNav = '<ul class="nav-tabs">';
+                for ($i = 1; $i <= $tabCount; $i++) {
+                    $activeClass = $i === 1 ? ' active' : '';
+                    $tabsNav .= "<button type=\"button\" class=\"tab$activeClass\" data-href=\"$tabId-$i\">$tabId $i</button>";
+                }
+                $tabsNav .= '</ul>';
+
+                // 分割每个tab块，并转换内容
+                $tabContents = '';
+                preg_match_all('/<!-- tab -->(.*?)<!-- endtab -->/is', $tabBlocks, $tabMatches);
+                foreach ($tabMatches[1] as $index => $tabContent) {
+                    $activeClass = $index === 0 ? ' active' : '';
+                    $tabContents .= "<div class=\"tab-item-content$activeClass\" id=\"$tabId-" . ($index + 1) . "\"><p><strong>" . trim($tabContent) . "</strong></p></div>";
+                }
+
+                // 组合所有部分
+                return "<div class=\"tabs\" id=\"$tabId\">$tabsNav<div class=\"tab-contents\">$tabContents</div><div class=\"tab-to-top\"><button type=\"button\" aria-label=\"scroll to top\"><i class=\"fas fa-arrow-up\"></i></button></div></div>";
+            },
+            $content
+        );
+
         // 如果内容经过解析后发生了变化，就清除所有的 <br> 标签
         if ($content !== $original_content) {
             $content = preg_replace('/<br\s?\/?>/i', '', $content);
