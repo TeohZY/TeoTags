@@ -649,28 +649,6 @@
   display: none;
 }
 
-summary {
-  display: list-item;
-}
-
-summary::marker {
-  unicode-bidi: isolate;
-  font-variant-numeric: tabular-nums;
-  text-transform: none;
-  text-indent: 0px !important;
-  text-align: start !important;
-  text-align-last: start !important;
-}
-
-summary::-webkit-details-marker {
-  unicode-bidi: isolate;
-  font-variant-numeric: tabular-nums;
-  text-transform: none;
-  text-indent: 0px !important;
-  text-align: start !important;
-  text-align-last: start !important;
-}
-
 .toggle {
   margin-bottom: 20px;
   border: 1px solid #f0f0f0;
@@ -685,4 +663,26 @@ summary::-webkit-details-marker {
 
 .toggle>.toggle-content {
   margin: 30px 24px;
+}
+
+.toggle summary {
+  display: list-item;
+}
+
+.toggle summary::marker {
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+  text-indent: 0px !important;
+  text-align: start !important;
+  text-align-last: start !important;
+}
+
+.toggle summary::-webkit-details-marker {
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+  text-transform: none;
+  text-indent: 0px !important;
+  text-align: start !important;
+  text-align-last: start !important;
 }
