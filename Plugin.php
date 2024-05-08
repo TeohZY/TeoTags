@@ -96,15 +96,21 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         }, $content);
 
 
-        $content = preg_replace_callback('/\{%\s*link\s+([^,]+),\s*([^,]+),\s*([^%\s]+)\s*%\}/i', function ($matches) {
-            // 检测第三部分匹配的内容中是否存在http://或https://，如果不存在，则添加https://前缀
-            if (!preg_match('~https?://~', $matches[3])) {
-                $url = 'https://' . $matches[3];
+        $content = preg_replace_callback('/\{%\slink\s(.*?),(.*?),(.*?)\s%\}/s', function ($matches) {
+            // 提取$matches[3]中的链接
+            if (preg_match('/href="([^"]+)"/', $matches[3], $linkMatches)) {
+                $url = $linkMatches[1];
             } else {
-                $url = $matches[3];
+                // 如果没有找到链接，可以设置一个默认值或进行错误处理
+                $url = "default_url"; // 请根据需要替换为合适的URL
             }
+        
+            // 检测提取出的链接是否包含http://或https://
+            if (!preg_match('~https?://~', $url)) {
+                $url = 'https://' . $url;
+            }
+        
             // 从URL中解析出主机名用于构造favicon图标的URL
-            // 注意：由于URL可能包含了特殊字符，所以在使用parse_url前需要确保URL已经适当地清理和编码
             $host = parse_url($url, PHP_URL_HOST);
             if ($host) {
                 $imgUrl = "https://api.iowen.cn/favicon/" . $host . ".png";
@@ -112,19 +118,19 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 // 处理无法解析主机名的情况
                 $imgUrl = "placeholder_image_url"; // 替换为合适的占位图标URL
             }
-
+        
             // 构建HTML结构，并返回
             return "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
-            <div class=\"tag-link-tips\">引用站外地址</div>
-            <div class=\"tag-link-bottom\">
-                <div class=\"tag-link-left\" style=\"background-image: url({$imgUrl});\"></div>
-                <div class=\"tag-link-right\">
-                    <div class=\"tag-link-title\">{$matches[1]}</div>
-                    <div class=\"tag-link-sitename\">{$matches[2]}</div>
+                <div class=\"tag-link-tips\">引用站外地址</div>
+                <div class=\"tag-link-bottom\">
+                    <div class=\"tag-link-left\" style=\"background-image: url({$imgUrl});\"></div>
+                    <div class=\"tag-link-right\">
+                        <div class=\"tag-link-title\">{$matches[1]}</div>
+                        <div class=\"tag-link-sitename\">{$matches[2]}</div>
+                    </div>
+                    <i class=\"fa-solid fa-angle-right\"></i>
                 </div>
-                <i class=\"fa-solid fa-angle-right\"></i>
-            </div>
-        </a></div>";
+            </a></div>";
         }, $content);
 
         // tables 
