@@ -102,7 +102,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 $url = $linkMatches[1];
             } else {
                 // 如果没有找到链接，可以设置一个默认值或进行错误处理
-                $url = "default_url"; // 请根据需要替换为合适的URL
+                $url = $matches[3]; // 请根据需要替换为合适的URL
             }
         
             // 检测提取出的链接是否包含http://或https://
