@@ -61,7 +61,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
 
     public static function parseCustomTemplateTags($content)
     {
-	$original_content = $content;
+        $original_content = $content;
         // 匹配多行和单行标记
         $multiLinePattern = '/{%\s*(\w+)\s+([\w\s]+?)\s*%}(.*?)\{%\s*end\1\s*%}/su';
         $notePattern = '/{%\s*note\s+([\w\s]+?)\s*%}(.*?)\{%\s*endnote\s*%}/su';
@@ -75,7 +75,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             $textContent = str_replace('<br>', '<br/>', $textContent);
 
             return "<div class=\"{$classString}\"><p>{$textContent}</p></div>";
-	}, $content);
+        }, $content);
 
 
         $content = preg_replace_callback('/\{%\s*hideToggle\s+(.*?)\s*%\}(.*?)\{%\s*endhideToggle\s*%\}/su', function ($matches) {
@@ -84,25 +84,37 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             // Convert each line of content into a paragraph
             $contentLines = explode("\n", $content);
             $contentHtml = "";
-            
+
             foreach ($contentLines as $line) {
                 $line = trim($line);
                 if ($line !== '') {
                     $contentHtml .= "<p>$line</p>";
                 }
             }
-        
-            return "<details class=\"toggle\"><summary class=\"toggle-button\">$title</summary><div class=\"toggle-content\">$contentHtml</div></details>";
-	}, $content);
 
-	
+            return "<details class=\"toggle\"><summary class=\"toggle-button\">$title</summary><div class=\"toggle-content\">$contentHtml</div></details>";
+        }, $content);
+
+
         $content = preg_replace_callback('/\{%\s*link\s+([^,]+),\s*([^,]+),\s*([^%\s]+)\s*%\}/i', function ($matches) {
-            // 这里的$matches[1], $matches[2], $matches[3]对应于link标签的三个参数
-            // 处理 favicon 的 API 可能有变化或需要改为自己的服务地址
-            $imgUrl = "https://api.iowen.cn/favicon/" . parse_url('https://' . $matches[3], PHP_URL_HOST) . ".png";
+            // 检测第三部分匹配的内容中是否存在http://或https://，如果不存在，则添加https://前缀
+            if (!preg_match('~https?://~', $matches[3])) {
+                $url = 'https://' . $matches[3];
+            } else {
+                $url = $matches[3];
+            }
+            // 从URL中解析出主机名用于构造favicon图标的URL
+            // 注意：由于URL可能包含了特殊字符，所以在使用parse_url前需要确保URL已经适当地清理和编码
+            $host = parse_url($url, PHP_URL_HOST);
+            if ($host) {
+                $imgUrl = "https://api.iowen.cn/favicon/" . $host . ".png";
+            } else {
+                // 处理无法解析主机名的情况
+                $imgUrl = "placeholder_image_url"; // 替换为合适的占位图标URL
+            }
 
             // 构建HTML结构，并返回
-            return "<div><a class=\"tag-Link\" target=\"_blank\" href=\"https://{$matches[3]}\">
+            return "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
             <div class=\"tag-link-tips\">引用站外地址</div>
             <div class=\"tag-link-bottom\">
                 <div class=\"tag-link-left\" style=\"background-image: url({$imgUrl});\"></div>
