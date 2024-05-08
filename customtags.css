@@ -687,7 +687,7 @@
   text-align-last: start !important;
 }
 
-.tabs {
+/* .tabs {
   position: relative;
   margin: 0 0 20px;
   border-right: 1px solid var(--tab-border-color);
@@ -789,4 +789,4 @@
 
 .tabs>.tab-to-top button:hover {
   color: #49b1f5
-}
+} */
