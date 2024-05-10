@@ -695,6 +695,12 @@
   border-left: 1px solid #f0f0f0
 }
 
+.tabs ul{
+  padding: 0;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
 .tabs>.nav-tabs {
   display: -webkit-box;
   display: -moz-box;
