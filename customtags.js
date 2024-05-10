@@ -3,11 +3,14 @@ $(document).ready(function() {
   setupScrollToTopButton();
 });
 
-$(document).on('handsomePjaxEnd', function() {
+$(document).on('contentLoaded', function() {
   initializeTabs();
   setupScrollToTopButton();
 });
-
+$(document).on('pjax:end', function() {
+  initializeTabs();
+  setupScrollToTopButton();
+});
 function initializeTabs() {
   $('.tabs').each(function() {
     var $tabsComponent = $(this);
