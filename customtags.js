@@ -56,11 +56,9 @@ function initializeTabs() {
   });
 }
 
-// 当DOM完全加载时调用一次
-document.addEventListener('DOMContentLoaded', initializeTabs);
+// 初始页面加载时，调用一次初始化函数
+$(document).ready(initializeTabs);
 
-// 配置Pjax回调
-pjax.on('success', function() {
-  initializeTabs();
-});
+// 监听 Pjax 结束事件，然后重新初始化
+$(document).on('pjax:end', initializeTabs);
 
