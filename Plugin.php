@@ -58,7 +58,12 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />' . "\n";
         echo '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />' . "\n";
     }
+    function JSConsole($data) {
 
+        $console = 'console.log(' . json_encode($data) . ');';
+        $console = sprintf('<script>%s</script>', $console);
+        echo $console;
+    }
     public static function parseCustomTemplateTags($content)
     {
         $original_content = $content;
@@ -154,17 +159,16 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         
                     // 创建Tab导航
                     $activeClass = $index === 0 ? ' active' : '';
-                    $tabNavs .= "<button type=\"button\" class=\"tab$activeClass\" data-href=\"$tabId-" . ($index + 1) . "\">$iconHtml $tabName</button>";
-        
+                    $tabNavs .= "<button type=\"button\" class=\"tab$activeClass\" data-href=\"$tabId-" . ($index + 1) . "\">$iconHtml $tabName </button>";
+                    self::JSConsole($tabNavs);
                     // 创建Tab内容
                     $tabContents .= "<div class=\"tab-item-content$activeClass\" id=\"$tabId-" . ($index + 1) . "\"><p><strong>" . trim($tabMatches[2][$index]) . "</strong></p></div>";
+                    self::JSConsole($tabContents);
                 }
         
                 // 组合所有部分
                 $data = "<div class=\"tabs\" id=\"$tabId\"><ul class=\"nav-tabs\">$tabNavs</ul><div class=\"tab-contents\">$tabContents</div><div class=\"tab-to-top\"><button type=\"button\" aria-label=\"scroll to top\"><i class=\"fas fa-arrow-up\"></i></button></div></div>";
-                $console = 'console.log(' . json_encode($data) . ');';
-                $console = sprintf('<script>%s</script>', $console);
-                echo $console;
+                self::JSConsole($data);
                 return $data;
             },
             $content
