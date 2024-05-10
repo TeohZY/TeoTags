@@ -687,12 +687,12 @@
   text-align-last: start !important;
 }
 
-/* .tabs {
+.tabs {
   position: relative;
   margin: 0 0 20px;
-  border-right: 1px solid var(--tab-border-color);
-  border-bottom: 1px solid var(--tab-border-color);
-  border-left: 1px solid var(--tab-border-color)
+  border-right: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+  border-left: 1px solid #f0f0f0
 }
 
 .tabs>.nav-tabs {
@@ -710,7 +710,7 @@
   flex-wrap: wrap;
   margin: 0;
   padding: 0;
-  background: var(--tab-botton-bg)
+  background: #f0f0f0
 }
 
 .tabs>.nav-tabs>.tab {
@@ -722,9 +722,11 @@
   -webkit-flex-grow: 1;
   flex-grow: 1;
   padding: 8px 18px;
-  border-top: 2px solid var(--tab-border-color);
-  background: var(--tab-botton-bg);
-  color: var(--tab-botton-color);
+  border:none;
+  border-top: 2px solid #f0f0f0;
+
+  background: #f0f0f0;
+  color: #1f2d3d;
   line-height: 2;
   -webkit-transition: all .4s;
   -moz-transition: all .4s;
@@ -739,7 +741,7 @@
 
 .tabs>.nav-tabs>.tab.active {
   border-top: 2px solid #49b1f5;
-  background: var(--tab-button-active-bg);
+  background: #fff;
   cursor: default
 }
 
@@ -784,9 +786,12 @@
 }
 
 .tabs>.tab-to-top button {
-  color: #99a9bf
+  padding-right: 16px;
+  color: #99a9bf;
+  border:none;
+  background-color: transparent;;
 }
 
 .tabs>.tab-to-top button:hover {
   color: #49b1f5
-} */
+}

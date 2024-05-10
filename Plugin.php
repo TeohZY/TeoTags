@@ -55,10 +55,17 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
     public static function header()
     {
         $cssUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.css';
+        $jsUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.js';
         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />' . "\n";
         echo '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />' . "\n";
+        echo '<script src="' . $jsUrl . '"></script>';
     }
+    public static function console($data) {
 
+        $console = 'console.log(' . json_encode($data) . ');';
+        $console = sprintf('<script>%s</script>', $console);
+        echo $console;
+        }
     public static function parseCustomTemplateTags($content)
     {
         $original_content = $content;
@@ -134,37 +141,47 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         }, $content);
 
         // tables 
-        // $content = preg_replace_callback(
-        //     '/\{% tabs (.*?) %\}(.*?)\{% endtabs %\}/is',
-        //     function ($matches) {
-        //         [$fullMatch, $tabId, $tabBlocks] = $matches;
+        $content = preg_replace_callback(
+            '/{%\s*tabs\s*(.*?),?\s*([\d-]*)?\s*%}([\s\S]*?){%\s*endtabs\s*%}/',
+            function($matches) {
+                $id = $matches[1];
+                $defaultActiveTab = !empty($matches[2]) ? (int)$matches[2] : 0;
+                $tabsBlock = $matches[3];
+                
+                preg_match_all('/<!--\s*tab\s*(.*?)\s*-->([\s\S]*?)<!--\s*endtab\s*-->/',
+                    $tabsBlock, $tabs_matches);
+                $tabTitles = $tabs_matches[1];
+                $tabContents = $tabs_matches[2];
         
-        //         // 分割每个tab块，并转换内容
-        //         $tabNavs = '';
-        //         $tabContents = '';
-        //         preg_match_all('/<!-- tab (.*?) -->(.*?)<!-- endtab -->/is', $tabBlocks, $tabMatches);
-        //         foreach ($tabMatches[1] as $index => $tabTitle) {
-        //             // 解析Tab标题，检查是否包含图标
-        //             $iconHtml = '';
-        //             $tabName = $tabTitle;
-        //             if (strpos($tabTitle, '@') !== false) {
-        //                 [$tabName, $icon] = explode('@', $tabTitle);
-        //                 $iconHtml = "<i class=\"$icon\"></i>";
-        //             }
+                $html = '<div class="tabs" id="'. $id .'"><ul class="nav-tabs">';
+                
+                foreach ($tabTitles as $i => $title) {
+                    $index = $i + 1;
+                    $active = $i === ($defaultActiveTab - 1) ? ' active' : '';
+                    if (strpos($title, '@') !== false) {
+                        $titleParts = explode('@', $title, 2);
+                        $iconClass = isset($titleParts[1]) ? '<i class="' . trim($titleParts[1]) . '" style="text-align:center"></i>' : '';
+                        $title = isset($titleParts[0]) && !empty(trim($titleParts[0])) ? $iconClass . ' ' . trim($titleParts[0]) : $iconClass;
+                    } else { 
+                        $title = !empty($title) ? $title : $id . ' ' . $index; 
+                    }
+                    $html .= '<button type="button" class="tab' . $active . '" data-href="' . $id . '-' . $index . '">' . $title . '</button>';
+                }
+                
+                $html .= '</ul><div class="tab-contents">';
+                
+                foreach ($tabContents as $i => $content) {
+                    $index = $i + 1;
+                    $active = $i === ($defaultActiveTab - 1) ? ' active' : '';
+                    $html .= '<div class="tab-item-content' . $active . '" id="' . $id . '-' . $index . '"><p>' . $content . '</p></div>';
+                }
+                
+                $html .= '</div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>';
         
-        //             // 创建Tab导航
-        //             $activeClass = $index === 0 ? ' active' : '';
-        //             $tabNavs .= "<button type=\"button\" class=\"tab$activeClass\" data-href=\"$tabId-" . ($index + 1) . "\">$iconHtml $tabName</button>";
-        
-        //             // 创建Tab内容
-        //             $tabContents .= "<div class=\"tab-item-content$activeClass\" id=\"$tabId-" . ($index + 1) . "\"><p><strong>" . trim($tabMatches[2][$index]) . "</strong></p></div>";
-        //         }
-        
-        //         // 组合所有部分
-        //         return "<div class=\"tabs\" id=\"$tabId\"><ul class=\"nav-tabs\">$tabNavs</ul><div class=\"tab-contents\">$tabContents</div><div class=\"tab-to-top\"><button type=\"button\" aria-label=\"scroll to top\"><i class=\"fas fa-arrow-up\"></i></button></div></div>";
-        //     },
-        //     $content
-        // );
+                return $html;
+            },
+            $content
+        );
         
 
         // 如果内容经过解析后发生了变化，就清除所有的 <br> 标签
