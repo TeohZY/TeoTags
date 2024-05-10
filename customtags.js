@@ -59,6 +59,10 @@ function initializeTabs() {
 // 初始页面加载时，调用一次初始化函数
 $(document).ready(initializeTabs);
 
-// 监听 Pjax 结束事件，然后重新初始化
-$(document).on('pjax:end', initializeTabs);
+$(document).on('pjax:end', function() {
+  if ($('.tabs').length) { // 检查 tabs 
+    console.log("tabs")
+    initializeTabs();
+  }
+});
 
