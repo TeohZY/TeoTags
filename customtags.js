@@ -14,10 +14,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const tabs = tabsComponent.querySelectorAll('.tab');
     const tabContents = tabsComponent.querySelectorAll('.tab-item-content');
 
-    clearActiveClasses(tabs); // 清除所有tab的active类
-    tabs[0].classList.add('active'); // 为第一个选项卡添加active类
-    tabContents.forEach(content => content.style.display = 'none'); // 隐藏所有内容
-    tabContents[0].style.display = 'block'; // 只显示第一个内容块
+    // 清除所有tab的active类并为第一个选项卡添加active类
+    clearActiveClasses(tabs);
+    tabs[0].classList.add('active');
+    
+    // 初始隐藏所有内容并只显示第一个内容块
+    clearActiveClasses(tabContents); // 确保开始时没有tabContent具有active类
+    tabContents.forEach(content => content.style.display = 'none');
+    tabContents[0].style.display = 'block';
+    tabContents[0].classList.add('active');
 
     // 为每个tab添加点击事件
     tabs.forEach(function (tab) {
@@ -27,25 +32,24 @@ document.addEventListener('DOMContentLoaded', function () {
         clearActiveClasses(tabs); // 清除所有tab的active类
         tab.classList.add('active'); // 为当前tab添加active类
 
+        clearActiveClasses(tabContents); // 在显示新的tabContent前，确保所有tabContents没有active类
         tabContents.forEach(function (content) {
           content.style.display = 'none'; // 隐藏所有tab内容
           if (content.getAttribute('id') === targetContentId) {
             content.style.display = 'block'; // 显示与当前tab匹配的内容
+            content.classList.add('active'); // 为当前tabContent添加active类
           }
         });
       });
     });
 
-    tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function () {
-      // 计算tabs组件相对于视口顶部的偏移量
+    tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function() {
+      // 计算tabs组件相对于视口顶部的偏移量并滚动
       const elementRect = tabsComponent.getBoundingClientRect();
       const elementTopRelativeToViewport = elementRect.top;
-
-      // 使用window.scrollBy方法令元素相对当前位置垂直滚动至视口顶部
-      // 确保我们不是向上滚动更远超过了页面顶部
       const offsetPosition = elementTopRelativeToViewport + window.scrollY - (document.documentElement.clientTop || 0);
       window.scroll({
-        top: offsetPosition,
+        top: offsetPosition, 
         behavior: 'smooth'
       });
     });
