@@ -59,6 +59,8 @@ function initializeTabs() {
 // 当DOM完全加载时调用一次
 document.addEventListener('DOMContentLoaded', initializeTabs);
 
-// 当Pjax加载完成时调用
-document.addEventListener('pjax:end', initializeTabs);
+// 配置Pjax回调
+pjax.on('success', function() {
+  initializeTabs();
+});
 
