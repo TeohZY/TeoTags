@@ -695,7 +695,7 @@
   border-left: 1px solid #f0f0f0
 }
 
-.tabs>.nav-tabs ul {
+.tabs ul{
   padding: 0;
   margin: 0;
   padding-inline-start: 0 !important;
@@ -728,7 +728,7 @@
   -webkit-flex-grow: 1;
   flex-grow: 1;
   padding: 8px 18px;
-  border: none;
+  border:none;
   border-top: 2px solid #f0f0f0;
 
   background: #f0f0f0;
@@ -768,7 +768,7 @@
 
 @media screen and (max-width: 768px) {
   .tabs>.tab-contents .tab-item-content {
-    padding: 24px 14px
+      padding:24px 14px
   }
 }
 
@@ -794,9 +794,8 @@
 .tabs>.tab-to-top button {
   padding-right: 16px;
   color: #99a9bf;
-  border: none;
-  background-color: transparent;
-  ;
+  border:none;
+  background-color: transparent;;
 }
 
 .tabs>.tab-to-top button:hover {
