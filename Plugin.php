@@ -58,15 +58,9 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />' . "\n";
         echo '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />' . "\n";
     }
+
     public static function parseCustomTemplateTags($content)
     {
-        function JSConsole($data) {
-
-            $console = 'console.log(' . json_encode($data) . ');';
-            $console = sprintf('<script>%s</script>', $console);
-            echo $console;
-        }
-
         $original_content = $content;
         // 匹配多行和单行标记
         $multiLinePattern = '/{%\s*(\w+)\s+([\w\s]+?)\s*%}(.*?)\{%\s*end\1\s*%}/su';
@@ -140,40 +134,37 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         }, $content);
 
         // tables 
-        $content = preg_replace_callback(
-            '/\{% tabs (.*?) %\}(.*?)\{% endtabs %\}/is',
-            function ($matches) {
-                [$fullMatch, $tabId, $tabBlocks] = $matches;
+        // $content = preg_replace_callback(
+        //     '/\{% tabs (.*?) %\}(.*?)\{% endtabs %\}/is',
+        //     function ($matches) {
+        //         [$fullMatch, $tabId, $tabBlocks] = $matches;
         
-                // 分割每个tab块，并转换内容
-                $tabNavs = '';
-                $tabContents = '';
-                preg_match_all('/<!-- tab (.*?) -->(.*?)<!-- endtab -->/is', $tabBlocks, $tabMatches);
-                foreach ($tabMatches[1] as $index => $tabTitle) {
-                    // 解析Tab标题，检查是否包含图标
-                    $iconHtml = '';
-                    $tabName = $tabTitle;
-                    if (strpos($tabTitle, '@') !== false) {
-                        [$tabName, $icon] = explode('@', $tabTitle);
-                        $iconHtml = "<i class=\"$icon\"></i>";
-                    }
+        //         // 分割每个tab块，并转换内容
+        //         $tabNavs = '';
+        //         $tabContents = '';
+        //         preg_match_all('/<!-- tab (.*?) -->(.*?)<!-- endtab -->/is', $tabBlocks, $tabMatches);
+        //         foreach ($tabMatches[1] as $index => $tabTitle) {
+        //             // 解析Tab标题，检查是否包含图标
+        //             $iconHtml = '';
+        //             $tabName = $tabTitle;
+        //             if (strpos($tabTitle, '@') !== false) {
+        //                 [$tabName, $icon] = explode('@', $tabTitle);
+        //                 $iconHtml = "<i class=\"$icon\"></i>";
+        //             }
         
-                    // 创建Tab导航
-                    $activeClass = $index === 0 ? ' active' : '';
-                    $tabNavs .= "<button type=\"button\" class=\"tab$activeClass\" data-href=\"$tabId-" . ($index + 1) . "\">$iconHtml $tabName </button>";
-                    JSConsole($tabNavs);
-                    // 创建Tab内容
-                    $tabContents .= "<div class=\"tab-item-content$activeClass\" id=\"$tabId-" . ($index + 1) . "\"><p><strong>" . trim($tabMatches[2][$index]) . "</strong></p></div>";
-                    JSConsole($tabContents);
-                }
+        //             // 创建Tab导航
+        //             $activeClass = $index === 0 ? ' active' : '';
+        //             $tabNavs .= "<button type=\"button\" class=\"tab$activeClass\" data-href=\"$tabId-" . ($index + 1) . "\">$iconHtml $tabName</button>";
         
-                // 组合所有部分
-                $data = "<div class=\"tabs\" id=\"$tabId\"><ul class=\"nav-tabs\">$tabNavs</ul><div class=\"tab-contents\">$tabContents</div><div class=\"tab-to-top\"><button type=\"button\" aria-label=\"scroll to top\"><i class=\"fas fa-arrow-up\"></i></button></div></div>";
-                JSConsole($data);
-                return $data;
-            },
-            $content
-        );
+        //             // 创建Tab内容
+        //             $tabContents .= "<div class=\"tab-item-content$activeClass\" id=\"$tabId-" . ($index + 1) . "\"><p><strong>" . trim($tabMatches[2][$index]) . "</strong></p></div>";
+        //         }
+        
+        //         // 组合所有部分
+        //         return "<div class=\"tabs\" id=\"$tabId\"><ul class=\"nav-tabs\">$tabNavs</ul><div class=\"tab-contents\">$tabContents</div><div class=\"tab-to-top\"><button type=\"button\" aria-label=\"scroll to top\"><i class=\"fas fa-arrow-up\"></i></button></div></div>";
+        //     },
+        //     $content
+        // );
         
 
         // 如果内容经过解析后发生了变化，就清除所有的 <br> 标签
