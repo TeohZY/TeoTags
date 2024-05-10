@@ -1,3 +1,12 @@
+$(document).on('handsomePjaxEnd', function() {
+  // 这里可以放置你的初始化逻辑或运行脚本
+  // 例如，初始化 tabs 控件
+  if ($('.tabs').length) { // 检查 tabs 
+    console.log("tabs")
+    initializeTabs();
+  }
+});
+
 function initializeTabs() {
   // 获取所有的tabs组件
   const tabsComponents = document.querySelectorAll('.tabs');
@@ -56,13 +65,4 @@ function initializeTabs() {
   });
 }
 
-// 初始页面加载时，调用一次初始化函数
-$(document).ready(initializeTabs);
-
-$(document).on('pjax:end', function() {
-  if ($('.tabs').length) { // 检查 tabs 
-    console.log("tabs")
-    initializeTabs();
-  }
-});
 
