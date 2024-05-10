@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+function initializeTabs() {
   // 获取所有的tabs组件
   const tabsComponents = document.querySelectorAll('.tabs');
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 清除所有tab的active类并为第一个选项卡添加active类
     clearActiveClasses(tabs);
     tabs[0].classList.add('active');
-    
+
     // 初始隐藏所有内容并只显示第一个内容块
     clearActiveClasses(tabContents); // 确保开始时没有tabContent具有active类
     tabContents.forEach(content => content.style.display = 'none');
@@ -43,15 +43,22 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function() {
+    tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function () {
       // 计算tabs组件相对于视口顶部的偏移量并滚动
       const elementRect = tabsComponent.getBoundingClientRect();
       const elementTopRelativeToViewport = elementRect.top;
       const offsetPosition = elementTopRelativeToViewport + window.scrollY - (document.documentElement.clientTop || 0);
       window.scroll({
-        top: offsetPosition, 
+        top: offsetPosition,
         behavior: 'smooth'
       });
     });
   });
-});
+}
+
+// 当DOM完全加载时调用一次
+document.addEventListener('DOMContentLoaded', initializeTabs);
+
+// 当Pjax加载完成时调用
+document.addEventListener('pjax:end', initializeTabs);
+
