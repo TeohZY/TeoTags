@@ -1,68 +1,45 @@
 $(document).on('handsomePjaxEnd', function() {
-  // 这里可以放置你的初始化逻辑或运行脚本
-  // 例如，初始化 tabs 控件
-  if ($('.tabs').length) { // 检查 tabs 
-    console.log("tabs")
+  // 检查是否存在.tabs类的元素，然后初始化tabs控件
+  if ($('.tabs').length) {
+    console.log("Tabs detected. Initializing...");
     initializeTabs();
+  } else {
+    console.log("No tabs detected.");
   }
 });
 
 function initializeTabs() {
-  // 获取所有的tabs组件
-  const tabsComponents = document.querySelectorAll('.tabs');
+  // 初始化所有含有.tabs类的组件
+  $('.tabs').each(function() {
+    var $tabsComponent = $(this);
+    var $tabs = $tabsComponent.find('.tab');
+    var $tabContents = $tabsComponent.find('.tab-item-content');
 
-  // 为每一个tabs组件定义行为
-  tabsComponents.forEach(function (tabsComponent) {
-    function clearActiveClasses(elements) {
-      elements.forEach(function (element) {
-        element.classList.remove('active');
-      });
+    // 清除所有tab和内容的active类
+    function clearActiveClasses() {
+      $tabs.removeClass('active');
+      $tabContents.removeClass('active').hide();
     }
 
-    // 对于每一个组件,只显示第一个tab内容
-    const tabs = tabsComponent.querySelectorAll('.tab');
-    const tabContents = tabsComponent.querySelectorAll('.tab-item-content');
+    // 默认显示第一个tab和内容
+    clearActiveClasses();
+    $tabs.first().addClass('active');
+    $tabContents.first().addClass('active').show();
 
-    // 清除所有tab的active类并为第一个选项卡添加active类
-    clearActiveClasses(tabs);
-    tabs[0].classList.add('active');
-
-    // 初始隐藏所有内容并只显示第一个内容块
-    clearActiveClasses(tabContents); // 确保开始时没有tabContent具有active类
-    tabContents.forEach(content => content.style.display = 'none');
-    tabContents[0].style.display = 'block';
-    tabContents[0].classList.add('active');
-
-    // 为每个tab添加点击事件
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        const targetContentId = tab.getAttribute('data-href');
-
-        clearActiveClasses(tabs); // 清除所有tab的active类
-        tab.classList.add('active'); // 为当前tab添加active类
-
-        clearActiveClasses(tabContents); // 在显示新的tabContent前，确保所有tabContents没有active类
-        tabContents.forEach(function (content) {
-          content.style.display = 'none'; // 隐藏所有tab内容
-          if (content.getAttribute('id') === targetContentId) {
-            content.style.display = 'block'; // 显示与当前tab匹配的内容
-            content.classList.add('active'); // 为当前tabContent添加active类
-          }
-        });
-      });
-    });
-
-    tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function () {
-      // 计算tabs组件相对于视口顶部的偏移量并滚动
-      const elementRect = tabsComponent.getBoundingClientRect();
-      const elementTopRelativeToViewport = elementRect.top;
-      const offsetPosition = elementTopRelativeToViewport + window.scrollY - (document.documentElement.clientTop || 0);
-      window.scroll({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    // 设置tabs点击事件
+    $tabs.click(function() {
+      // 当点击tab时清除所有的'active'类并显示相关内容
+      clearActiveClasses();
+      $(this).addClass('active');
+      var targetContentId = $(this).attr('data-href');
+      $('#' + targetContentId).addClass('active').show();
     });
   });
+
+  // 初始化滚动到顶部按钮
+  $('.tab-to-top button').click(function() {
+    $('html,body').animate({
+      scrollTop: 0
+    }, 'smooth');
+  });
 }
-
-
