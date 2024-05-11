@@ -188,6 +188,32 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             $content
         );
 
+        $content = preg_replace_callback(
+            '/{%\s*timeline\s*(.*?)\s*%}(.*?){%\s*endtimeline\s*%}/s',
+            function ($matches) {
+                // 分解并处理模板标签参数
+                $params = explode(',', $matches[1]);
+                $year = trim($params[0]);
+                $color_class = isset($params[1]) ? trim($params[1]) : 'undefined';
+        
+                // 分解并处理时间线内容
+                $timeline_contents = '';
+                preg_match_all('#<!--\s*timeline\s*(.*?)\s*-->(.*?)<!--\s*endtimeline\s*-->#is', $matches[2], $timeline_contents_template);
+                for ($i = 0; $i < count($timeline_contents_template[1]); $i++) {
+                    $date = $timeline_contents_template[1][$i];
+                    $content = $timeline_contents_template[2][$i];
+                    
+                    $timeline_contents .= '<div class="timeline-item"><div class="timeline-item-title"><div class="item-circle"><p>'.trim($date).'</p></div></div><div class="timeline-item-content"><p>'.trim($content).'</p></div></div>';
+                }
+        
+                // 构建最终的HTML结构
+                $rendered_html = '<div class="custom-tags timeline '.$color_class.'"><div class="timeline-item headline"><div class="timeline-item-title"><div class="item-circle"><p>'.$year.'</p></div></div></div>'.$timeline_contents.'</div>';
+        
+                return $rendered_html;
+            },
+            $content
+        );
+
 
         // 如果内容经过解析后发生了变化，就清除所有的 <br> 标签
         if ($content !== $original_content) {
