@@ -8,8 +8,15 @@ $(document).on('contentLoaded', function() {
   setupScrollToTopButton();
 });
 $(document).on('pjax:end', function() {
+  console.log('pjax:end')
   initializeTabs();
   setupScrollToTopButton();
+});
+$(document).on('pjax:send', function() {
+  console.log('pjax:send')
+});
+$(document).on('pjax:error', function() {
+  console.log('pjax:error')
 });
 function initializeTabs() {
   $('.tabs').each(function() {
