@@ -39,10 +39,13 @@ function initializeTabs() {
 
 function setupScrollToTopButton() {
   $('.tab-to-top button').click(function(event) {
-    event.preventDefault();  // 防止执行点击按钮的默认行为
-  
-    $('html, body').animate({
+    event.preventDefault(); // 阻止默认行为
+    event.stopPropagation(); // 阻止事件冒泡
+    
+    // 使用 'body, html' 可能会在一些情况下导致滚动问题
+    // 可以只用 'html' 或者 'body' 来避免这个问题
+    $('html').animate({
       scrollTop: 0
-    }, 600);  // 用 'smooth' 替换为具体的动画时长（如 600 毫秒），因为 jQuery 的 animate 方法不支持 'smooth' 这一关键字
+    }, 600); // 使用数字来指定动画时长
   });
 }
