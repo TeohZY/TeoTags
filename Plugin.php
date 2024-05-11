@@ -207,7 +207,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 }
         
                 // 构建最终的HTML结构
-                $rendered_html = '<div class="custom-tags timeline '.$color_class.'"><div class="timeline-item headline"><div class="timeline-item-title"><div class="item-circle"><p>'.$year.'</p></div></div></div>'.$timeline_contents.'</div>';
+                $rendered_html = '<div class="custom-tags"><div class="timeline '.$color_class.'"><div class="timeline-item headline"><div class="timeline-item-title"><div class="item-circle"><p>'.$year.'</p></div></div></div>'.$timeline_contents.'</div></div>';
         
                 return $rendered_html;
             },
