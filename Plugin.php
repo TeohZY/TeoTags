@@ -55,17 +55,18 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
     public static function header()
     {
         $cssUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.css';
-        $jsUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.js';
+        // $jsUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.js';
         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />' . "\n";
         echo '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />' . "\n";
-        echo '<script src="' . $jsUrl . '"></script>';
+        // echo '<script type="text/javascript" src="' . $jsUrl . '"></script>';
     }
-    public static function console($data) {
+    public static function console($data)
+    {
 
         $console = 'console.log(' . json_encode($data) . ');';
         $console = sprintf('<script>%s</script>', $console);
         echo $console;
-        }
+    }
     public static function parseCustomTemplateTags($content)
     {
         $original_content = $content;
@@ -111,12 +112,12 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 // 如果没有找到链接，可以设置一个默认值或进行错误处理
                 $url = $matches[3]; // 请根据需要替换为合适的URL
             }
-        
+
             // 检测提取出的链接是否包含http://或https://
             if (!preg_match('~https?://~', $url)) {
                 $url = 'https://' . $url;
             }
-        
+
             // 从URL中解析出主机名用于构造favicon图标的URL
             $host = parse_url($url, PHP_URL_HOST);
             if ($host) {
@@ -125,7 +126,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 // 处理无法解析主机名的情况
                 $imgUrl = "placeholder_image_url"; // 替换为合适的占位图标URL
             }
-        
+
             // 构建HTML结构，并返回
             return "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
                 <div class=\"tag-link-tips\">引用站外地址</div>
@@ -143,18 +144,21 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         // tables 
         $content = preg_replace_callback(
             '/{%\s*tabs\s*(.*?),?\s*([\d-]*)?\s*%}([\s\S]*?){%\s*endtabs\s*%}/',
-            function($matches) {
+            function ($matches) {
                 $id = $matches[1];
                 $defaultActiveTab = !empty($matches[2]) ? (int)$matches[2] : 0;
                 $tabsBlock = $matches[3];
-                
-                preg_match_all('/<!--\s*tab\s*(.*?)\s*-->([\s\S]*?)<!--\s*endtab\s*-->/',
-                    $tabsBlock, $tabs_matches);
+
+                preg_match_all(
+                    '/<!--\s*tab\s*(.*?)\s*-->([\s\S]*?)<!--\s*endtab\s*-->/',
+                    $tabsBlock,
+                    $tabs_matches
+                );
                 $tabTitles = $tabs_matches[1];
                 $tabContents = $tabs_matches[2];
-        
-                $html = '<div class="tabs" id="'. $id .'"><ul class="nav-tabs">';
-                
+
+                $html = '<div class="tabs" id="' . $id . '"><ul class="nav-tabs">';
+
                 foreach ($tabTitles as $i => $title) {
                     $index = $i + 1;
                     $active = $i === ($defaultActiveTab - 1) ? ' active' : '';
@@ -162,27 +166,28 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                         $titleParts = explode('@', $title, 2);
                         $iconClass = isset($titleParts[1]) ? '<i class="' . trim($titleParts[1]) . '" style="text-align:center"></i>' : '';
                         $title = isset($titleParts[0]) && !empty(trim($titleParts[0])) ? $iconClass . ' ' . trim($titleParts[0]) : $iconClass;
-                    } else { 
-                        $title = !empty($title) ? $title : $id . ' ' . $index; 
+                    } else {
+                        $title = !empty($title) ? $title : $id . ' ' . $index;
                     }
                     $html .= '<button type="button" class="tab' . $active . '" data-href="' . $id . '-' . $index . '">' . $title . '</button>';
                 }
-                
+
                 $html .= '</ul><div class="tab-contents">';
-                
+
                 foreach ($tabContents as $i => $content) {
                     $index = $i + 1;
                     $active = $i === ($defaultActiveTab - 1) ? ' active' : '';
                     $html .= '<div class="tab-item-content' . $active . '" id="' . $id . '-' . $index . '"><p>' . $content . '</p></div>';
                 }
-                
+
                 $html .= '</div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>';
-        
+                $jsUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.js';
+                $html .= '<script type="text/javascript" src="' . $jsUrl . '"></script>';
                 return $html;
             },
             $content
         );
-        
+
 
         // 如果内容经过解析后发生了变化，就清除所有的 <br> 标签
         if ($content !== $original_content) {
