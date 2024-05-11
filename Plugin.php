@@ -103,6 +103,15 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             return "<details class=\"toggle\"><summary class=\"toggle-button\">$title</summary><div class=\"toggle-content\">$contentHtml</div></details>";
         }, $content);
 
+        $content = preg_replace_callback(
+            '/{%\s*label\s*([^%}]*)\s*(.*?)\s*%}/',
+            function ($matches) {
+                $text = $matches[1];  // 这是标签中的文本内容
+                $color_class = isset($matches[2]) ? trim($matches[2]) : 'default'; // 如果指定了颜色类，则使用，否则默认为'default'
+                return '<mark class="hl-label ' . $color_class . '">' . $text . '</mark>';
+            },
+            $content
+        );
 
         $content = preg_replace_callback('/\{%\slink\s(.*?),(.*?),(.*?)\s%\}/s', function ($matches) {
             // 提取$matches[3]中的链接

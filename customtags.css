@@ -6,6 +6,40 @@
   -webkit-font-smoothing: antialiased;
 }
 
+.hl-label {
+  padding: 2px 4px;
+  border-radius: 3px;
+  color: #fff
+}
+
+.hl-label.default {
+  background-color: #777
+}
+
+.hl-label.blue {
+  background-color: #428bca
+}
+
+.hl-label.pink {
+  background-color: #ff69b4
+}
+
+.hl-label.red {
+  background-color: red
+}
+
+.hl-label.purple {
+  background-color: #6f42c1
+}
+
+.hl-label.orange {
+  background-color: #ff8c00
+}
+
+.hl-label.green {
+  background-color: #5cb85c
+}
+
 .note {
   position: relative;
   margin: 0 0 20px;
