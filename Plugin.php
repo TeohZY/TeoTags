@@ -104,10 +104,12 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         }, $content);
 
         $content = preg_replace_callback(
-            '/{%\s*label\s*([^%}]*)\s*(.*?)\s*%}/',
+            '/{%\s*label\s+(\S+?)(?:\s+(\S+))?\s*%}/',
             function ($matches) {
-                $text = $matches[1];  // 这是标签中的文本内容
-                $color_class = isset($matches[2]) ? trim($matches[2]) : 'default'; // 如果指定了颜色类，则使用，否则默认为'default'
+                $text = $matches[1]; // 获取文本内容
+                // 如果指定了颜色类，则使用，否则默认为'default'
+                $color_class = isset($matches[2]) ? $matches[2] : 'default';
+
                 return '<mark class="hl-label ' . $color_class . '">' . $text . '</mark>';
             },
             $content
@@ -204,20 +206,20 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 $params = explode(',', $matches[1]);
                 $year = trim($params[0]);
                 $color_class = isset($params[1]) ? trim($params[1]) : 'undefined';
-        
+
                 // 分解并处理时间线内容
                 $timeline_contents = '';
                 preg_match_all('#<!--\s*timeline\s*(.*?)\s*-->(.*?)<!--\s*endtimeline\s*-->#is', $matches[2], $timeline_contents_template);
                 for ($i = 0; $i < count($timeline_contents_template[1]); $i++) {
                     $date = $timeline_contents_template[1][$i];
                     $content = $timeline_contents_template[2][$i];
-                    
-                    $timeline_contents .= '<div class="timeline-item"><div class="timeline-item-title"><div class="item-circle"><p>'.trim($date).'</p></div></div><div class="timeline-item-content"><p>'.trim($content).'</p></div></div>';
+
+                    $timeline_contents .= '<div class="timeline-item"><div class="timeline-item-title"><div class="item-circle"><p>' . trim($date) . '</p></div></div><div class="timeline-item-content"><p>' . trim($content) . '</p></div></div>';
                 }
-        
+
                 // 构建最终的HTML结构
-                $rendered_html = '<div class="custom-tags"><div class="timeline '.$color_class.'"><div class="timeline-item headline"><div class="timeline-item-title"><div class="item-circle"><p>'.$year.'</p></div></div></div>'.$timeline_contents.'</div></div>';
-        
+                $rendered_html = '<div class="custom-tags"><div class="timeline ' . $color_class . '"><div class="timeline-item headline"><div class="timeline-item-title"><div class="item-circle"><p>' . $year . '</p></div></div></div>' . $timeline_contents . '</div></div>';
+
                 return $rendered_html;
             },
             $content
