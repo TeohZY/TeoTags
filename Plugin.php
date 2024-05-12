@@ -1,11 +1,11 @@
 <?php
 
 /**
- * 适配 {% %} 语法
+ * typecho中实现ButterFly语法
  *
- * @package CustomTags
+ * @package TeoTabs
  * @author TeohZY
- * @version 1.0.0
+ * @version 1.1.0
  * @dependence 14.10.10-a
  * @link https://blog.teohzy.com
  *
