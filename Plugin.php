@@ -163,7 +163,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 </div>
             </a></div>";
             self::console($test);
-            return ""
+            return "";
         }, $content);
 
         // tables 
