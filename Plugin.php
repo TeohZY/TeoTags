@@ -67,18 +67,24 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         $console = sprintf('<script>%s</script>', $console);
         echo $console;
     }
+    public static function handlePreTags(&$content, &$placeholders, &$originals)
+    {
+        preg_match_all('!(<pre[^>]*>.*?</pre>)!is', $content, $pre_blocks);
+
+        foreach ($pre_blocks[0] as $index => $pre_block) {
+            $placeholder = "<!--pre-placeholder{$index}-->";
+            $placeholders[] = $placeholder;
+            $originals[] = $pre_block;
+            $content = str_replace($pre_block, $placeholder, $content);
+        }
+    }
     public static function parseCustomTemplateTags($content)
     {
 
         // 首先保存 <pre>...</pre> 区块内容，避免被自定义标签解析干扰。
-        preg_match_all('!(<pre[^>]*>.*?</pre>)!is', $content, $pre_blocks);
         $placeholders = [];
-
-        foreach ($pre_blocks[0] as $index => $pre_block) {
-            $placeholder = "<!--placeholder{$index}-->";
-            $placeholders[] = $placeholder;
-            $content = str_replace($pre_block, $placeholder, $content);
-        }
+        $originals = [];
+        self::handlePreTags($content, $placeholders, $originals);
 
         $original_content = $content;
         // 匹配多行和单行标记
@@ -245,8 +251,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             $content = preg_replace('/<br\s?\/?>/i', '', $content);
         }
 
-        // 在所有自定义解析完成后，还原保存的 <pre></pre> 区块内容。
-        $content = str_replace($placeholders, $pre_blocks[0], $content);
+        $content = str_replace($placeholders, $originals, $content);
 
         return $content;
     }
