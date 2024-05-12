@@ -135,7 +135,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 // 如果没有找到链接，可以设置一个默认值或进行错误处理
                 $url = $matches[3]; // 请根据需要替换为合适的URL
             }
-            self::config($url);
+            self::console($url);
             // 检测提取出的链接是否包含http://或https://
             if (!preg_match('~https?://~', $url)) {
                 $url = 'https://' . $url;
