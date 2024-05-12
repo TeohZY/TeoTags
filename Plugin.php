@@ -127,6 +127,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         );
 
         $content = preg_replace_callback('/\{%\slink\s(.*?),(.*?),(.*?)\s%\}/s', function ($matches) {
+            self::console($matches)
             // 提取$matches[3]中的链接
             if (preg_match('/href="([^"]+)"/', $matches[3], $linkMatches)) {
                 $url = $linkMatches[1];
