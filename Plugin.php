@@ -67,25 +67,8 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         $console = sprintf('<script>%s</script>', $console);
         echo $console;
     }
-    public static function handlePreTags(&$content, &$placeholders, &$originals)
-    {
-        preg_match_all('!(<pre[^>]*>.*?</pre>)!is', $content, $pre_blocks);
-
-        foreach ($pre_blocks[0] as $index => $pre_block) {
-            $placeholder = "<!--pre-placeholder{$index}-->";
-            $placeholders[] = $placeholder;
-            $originals[] = $pre_block;
-            $content = str_replace($pre_block, $placeholder, $content);
-        }
-    }
     public static function parseCustomTemplateTags($content)
     {
-
-        // 首先保存 <pre>...</pre> 区块内容，避免被自定义标签解析干扰。
-        $placeholders = [];
-        $originals = [];
-        self::handlePreTags($content, $placeholders, $originals);
-
         $original_content = $content;
         // 匹配多行和单行标记
         $multiLinePattern = '/{%\s*(\w+)\s+([\w\s]+?)\s*%}(.*?)\{%\s*end\1\s*%}/su';
@@ -133,7 +116,6 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         );
 
         $content = preg_replace_callback('/\{%\slink\s(.*?),(.*?),(.*?)\s%\}/s', function ($matches) {
-            self::console($matches);
             // 提取$matches[3]中的链接
             if (preg_match('/href="([^"]+)"/', $matches[3], $linkMatches)) {
                 $url = $linkMatches[1];
@@ -141,7 +123,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 // 如果没有找到链接，可以设置一个默认值或进行错误处理
                 $url = $matches[3]; // 请根据需要替换为合适的URL
             }
-            self::console($url);
+
             // 检测提取出的链接是否包含http://或https://
             if (!preg_match('~https?://~', $url)) {
                 $url = 'https://' . $url;
@@ -157,7 +139,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             }
 
             // 构建HTML结构，并返回
-            $test = "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
+            return "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
                 <div class=\"tag-link-tips\">引用站外地址</div>
                 <div class=\"tag-link-bottom\">
                     <div class=\"tag-link-left\" style=\"background-image: url({$imgUrl});\"></div>
@@ -168,8 +150,6 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                     <i class=\"fa-solid fa-angle-right\"></i>
                 </div>
             </a></div>";
-            self::console($test);
-            return "";
         }, $content);
 
         // tables 
@@ -250,9 +230,6 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         if ($content !== $original_content) {
             $content = preg_replace('/<br\s?\/?>/i', '', $content);
         }
-
-        $content = str_replace($placeholders, $originals, $content);
-
         return $content;
     }
 }
