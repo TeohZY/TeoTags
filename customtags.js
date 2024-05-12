@@ -1,11 +1,11 @@
-$(document).ready(function () {
+$(document).ready(function() {
   initializeTabs();
 });
 
-$(document).on('contentLoaded', function () {
+$(document).on('contentLoaded', function() {
   initializeTabs();
 });
-$(document).on('pjax:end', function () {
+$(document).on('pjax:end', function() {
   if ($('.tabs').length > 0) {
     initializeTabs();
   }
@@ -56,24 +56,24 @@ function initializeTabs() {
     });
 
     tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function () {
-      // 计算tabs组件相对于视口顶部的偏移量并滚动
       const header = document.getElementById('header');
       let headerHeight = 0;
-
+    
       // 检测header是否具有类fix-padding
       if (header.classList.contains('fix-padding')) {
         headerHeight = header.offsetHeight; // 获取header的高度
       }
-
+    
       const elementRect = tabsComponent.getBoundingClientRect();
       const elementTopRelativeToViewport = elementRect.top;
-
+    
       // 减去header的高度以及可能存在的文档边框宽度（例如浏览器默认的边框）
       const offsetPosition = elementTopRelativeToViewport + window.scrollY - headerHeight - (document.documentElement.clientTop || 0);
-
+    
       window.scroll({
         top: offsetPosition,
         behavior: 'smooth'
       });
     });
-  }
+  });
+}
