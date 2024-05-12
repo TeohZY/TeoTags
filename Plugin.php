@@ -69,6 +69,12 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
     }
     public static function parseCustomTemplateTags($content)
     {
+
+        // 首先保存 <pre></pre> 区块内容，避免被自定义标签解析干扰。
+        preg_match_all('!(<pre>.*?</pre>)!is', $content, $pre_blocks);
+        $placeholder = "<!--placeholder-->";
+        $content = preg_replace('!(<pre>.*?</pre>)!is', $placeholder, $content);
+
         $original_content = $content;
         // 匹配多行和单行标记
         $multiLinePattern = '/{%\s*(\w+)\s+([\w\s]+?)\s*%}(.*?)\{%\s*end\1\s*%}/su';
@@ -229,6 +235,11 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
         // 如果内容经过解析后发生了变化，就清除所有的 <br> 标签
         if ($content !== $original_content) {
             $content = preg_replace('/<br\s?\/?>/i', '', $content);
+        }
+
+        // 在所有自定义解析完成后，还原保存的 <pre></pre> 区块内容。
+        foreach ($pre_blocks[0] as $pre_block) {
+            $content = preg_replace("!$placeholder!", $pre_block, $content, 1);
         }
         return $content;
     }
