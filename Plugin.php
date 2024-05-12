@@ -151,7 +151,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
             }
 
             // 构建HTML结构，并返回
-            return "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
+            $test = "<div><a class=\"tag-Link\" target=\"_blank\" href=\"{$url}\">
                 <div class=\"tag-link-tips\">引用站外地址</div>
                 <div class=\"tag-link-bottom\">
                     <div class=\"tag-link-left\" style=\"background-image: url({$imgUrl});\"></div>
@@ -162,6 +162,8 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                     <i class=\"fa-solid fa-angle-right\"></i>
                 </div>
             </a></div>";
+            self::console($test);
+            return ""
         }, $content);
 
         // tables 
