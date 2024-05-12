@@ -72,6 +72,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
 
         // 首先保存 <pre></pre> 区块内容，避免被自定义标签解析干扰。
         preg_match_all('!(<pre>.*?</pre>)!is', $content, $pre_blocks);
+        self::console($pre_block);
         $placeholder = "<!--placeholder-->";
         $content = preg_replace('!(<pre>.*?</pre>)!is', $placeholder, $content);
 
