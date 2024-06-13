@@ -804,7 +804,9 @@ html.theme-dark .tabs>.nav-tabs {
 }
 
 html.theme-dark .tabs>.nav-tabs>.tab{
+  border-top: 2px solid #2c2c2c;
   background-color: #2c2c2c;
+  color: rgba(255,255,255,0.7);
 }
 
 .tabs>.nav-tabs>.tab i {
