@@ -803,6 +803,10 @@ html.theme-dark .tabs>.nav-tabs {
   transition: all .4s
 }
 
+html.theme-dark .tabs>.nav-tabs>.tab{
+  background-color: #2c2c2c;
+}
+
 .tabs>.nav-tabs>.tab i {
   width: 1.5em
 }
