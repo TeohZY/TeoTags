@@ -54,19 +54,16 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
 
     public static function header()
     {
-        $cssUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.css';
-        // $jsUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.js';
+        $cssUrl = Helper::options()->pluginUrl . '/' . basename(dirname(__DIR__)) . '/customtags.css';
+        $jsUrl = Helper::options()->pluginUrl . '/' . basename(dirname(__DIR__)) . '/customtags.js';
+
+        //$cssUrl = Helper::options()->pluginUrl . '/TeoTabs/customtags.css';
+        // $jsUrl = Helper::options()->pluginUrl . '/TeoTabs/customtags.js';
         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />' . "\n";
         echo '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />' . "\n";
-        // echo '<script type="text/javascript" src="' . $jsUrl . '"></script>';
+        echo '<script data-pjax type="text/javascript" src="' . $jsUrl . '"></script>';
     }
-    public static function console($data)
-    {
 
-        $console = 'console.log(' . json_encode($data) . ');';
-        $console = sprintf('<script>%s</script>', $console);
-        echo $console;
-    }
     public static function parseCustomTemplateTags($content)
     {
 
@@ -203,7 +200,7 @@ class CustomTags_Plugin implements Typecho_Plugin_Interface
                 }
 
                 $html .= '</div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>';
-                $jsUrl = Helper::options()->pluginUrl . '/CustomTags/customtags.js';
+                $jsUrl = Helper::options()->pluginUrl . '/TeoTabs/customtags.js';
                 $html .= '<script type="text/javascript" src="' . $jsUrl . '"></script>';
                 return $html;
             },
