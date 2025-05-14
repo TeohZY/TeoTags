@@ -3,7 +3,7 @@
 /**
  * typecho中实现ButterFly语法
  *
- * @package TeoTabs
+ * @package TeoTags
  * @author TeohZY
  * @version 1.1.0
  * @dependence 14.10.10-a
@@ -14,17 +14,17 @@
 if (!defined('__TYPECHO_ROOT_DIR__'))
     exit;
 
-class TeoTabs_Plugin implements Typecho_Plugin_Interface
+class TeoTags_Plugin implements Typecho_Plugin_Interface
 {
     /* 激活插件方法 */
     public static function activate()
     {
-        Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('TeoTabs_Plugin', 'applyCustomTemplateParsing');
-        Typecho_Plugin::factory('Widget_Abstract_Contents')->excerptEx = array('TeoTabs_Plugin', 'applyCustomTemplateParsing');
-        Typecho_Plugin::factory('Widget_Archive')->content = array('TeoTabs_Plugin', 'applyCustomTemplateParsing');
+        Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('TeoTags_Plugin', 'applyCustomTemplateParsing');
+        Typecho_Plugin::factory('Widget_Abstract_Contents')->excerptEx = array('TeoTags_Plugin', 'applyCustomTemplateParsing');
+        Typecho_Plugin::factory('Widget_Archive')->content = array('TeoTags_Plugin', 'applyCustomTemplateParsing');
 
         // 添加header钩子来输出CSS文件
-        Typecho_Plugin::factory('Widget_Archive')->header = array('TeoTabs_Plugin', 'header');
+        Typecho_Plugin::factory('Widget_Archive')->header = array('TeoTags_Plugin', 'header');
     }
 
     /* 禁用插件方法 */
@@ -54,14 +54,11 @@ class TeoTabs_Plugin implements Typecho_Plugin_Interface
 
     public static function header()
     {
-        $cssUrl = Helper::options()->pluginUrl . '/' . basename(dirname(__DIR__)) . '/customtags.css';
-        $jsUrl = Helper::options()->pluginUrl . '/' . basename(dirname(__DIR__)) . '/customtags.js';
-
-        //$cssUrl = Helper::options()->pluginUrl . '/TeoTabs/customtags.css';
-        // $jsUrl = Helper::options()->pluginUrl . '/TeoTabs/customtags.js';
+        $cssUrl = Helper::options()->pluginUrl . '/TeoTags/customtags.css';
+        $jsUrl = Helper::options()->pluginUrl . '/TeoTags/customtags.js';
         echo '<link rel="stylesheet" type="text/css" href="' . $cssUrl . '" />' . "\n";
         echo '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />' . "\n";
-        echo '<script data-pjax type="text/javascript" src="' . $jsUrl . '"></script>';
+        echo '<script data-pjax="true" data-pjax-eval="true" type="text/javascript" src="' . $jsUrl . '"></script>';
     }
 
     public static function parseCustomTemplateTags($content)
@@ -140,7 +137,7 @@ class TeoTabs_Plugin implements Typecho_Plugin_Interface
             // 从URL中解析出主机名用于构造favicon图标的URL
             $host = parse_url($url, PHP_URL_HOST);
             if ($host) {
-                $imgUrl = "https://api.iowen.cn/favicon/" . $host . ".png";
+                $imgUrl = "https://api.teohzy.com/favicon/" . $host . ".png";
             } else {
                 // 处理无法解析主机名的情况
                 $imgUrl = "placeholder_image_url"; // 替换为合适的占位图标URL
@@ -200,8 +197,8 @@ class TeoTabs_Plugin implements Typecho_Plugin_Interface
                 }
 
                 $html .= '</div><div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div>';
-                $jsUrl = Helper::options()->pluginUrl . '/TeoTabs/customtags.js';
-                $html .= '<script type="text/javascript" src="' . $jsUrl . '"></script>';
+                // $jsUrl = Helper::options()->pluginUrl . '/TeoTags/customtags.js';
+                // $html .= '<script data-pjax type="text/javascript" src="' . $jsUrl . '"></script>';
                 return $html;
             },
             $content

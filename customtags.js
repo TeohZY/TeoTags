@@ -1,15 +1,5 @@
-$(document).ready(function() {
-  initializeTabs();
-});
 
-$(document).on('contentLoaded', function() {
-  initializeTabs();
-});
-$(document).on('pjax:end', function() {
-  if ($('.tabs').length > 0) {
-    initializeTabs();
-  }
-});
+
 function initializeTabs() {
   // 获取所有的tabs组件
   const tabsComponents = document.querySelectorAll('.tabs');
@@ -56,7 +46,7 @@ function initializeTabs() {
     });
 
     tabsComponent.querySelector(".tab-to-top button").addEventListener("click", function () {
-      const header = document.getElementById('header');
+      const header = document.querySelector('header');
       let headerHeight = 0;
     
       // 检测header是否具有类fix-padding
@@ -76,4 +66,40 @@ function initializeTabs() {
       });
     });
   });
+}
+
+
+// 通用事件绑定函数，兼容原生和 jQuery
+function bindPjaxEvent() {
+  // 优先使用原生 addEventListener
+  if (document.addEventListener) {
+    document.addEventListener('pjax:complete', initializeTabs, false);
+  } 
+  // 回退到 jQuery（如果项目中使用 jQuery 且 pjax 依赖 jQuery）
+  else if (typeof jQuery !== 'undefined') {
+    $(document).on('pjax:complete', initializeTabs);
+  } 
+  // 如果两者都不支持，记录错误
+  else {
+    console.warn('无法绑定 pjax:complete 事件，缺少 addEventListener 或 jQuery');
+  }
+}
+
+// 确保初次加载和 pjax 加载都触发
+function init() {
+  // 绑定 pjax 事件
+  bindPjaxEvent();
+  // 初次页面加载时调用
+  initializeTabs();
+}
+
+// 在 DOM 加载完成后执行
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  init();
+} else {
+  document.addEventListener('DOMContentLoaded', init, false);
+  // 兼容 jQuery 的 DOM 加载
+  if (typeof jQuery !== 'undefined') {
+    $(document).ready(init);
+  }
 }
