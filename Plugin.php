@@ -14,17 +14,17 @@
 if (!defined('__TYPECHO_ROOT_DIR__'))
     exit;
 
-class CustomTags_Plugin implements Typecho_Plugin_Interface
+class TeoTabs_Plugin implements Typecho_Plugin_Interface
 {
     /* 激活插件方法 */
     public static function activate()
     {
-        Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('CustomTags_Plugin', 'applyCustomTemplateParsing');
-        Typecho_Plugin::factory('Widget_Abstract_Contents')->excerptEx = array('CustomTags_Plugin', 'applyCustomTemplateParsing');
-        Typecho_Plugin::factory('Widget_Archive')->content = array('CustomTags_Plugin', 'applyCustomTemplateParsing');
+        Typecho_Plugin::factory('Widget_Abstract_Contents')->contentEx = array('TeoTabs_Plugin', 'applyCustomTemplateParsing');
+        Typecho_Plugin::factory('Widget_Abstract_Contents')->excerptEx = array('TeoTabs_Plugin', 'applyCustomTemplateParsing');
+        Typecho_Plugin::factory('Widget_Archive')->content = array('TeoTabs_Plugin', 'applyCustomTemplateParsing');
 
         // 添加header钩子来输出CSS文件
-        Typecho_Plugin::factory('Widget_Archive')->header = array('CustomTags_Plugin', 'header');
+        Typecho_Plugin::factory('Widget_Archive')->header = array('TeoTabs_Plugin', 'header');
     }
 
     /* 禁用插件方法 */
