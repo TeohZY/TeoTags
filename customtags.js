@@ -68,16 +68,23 @@ function initializeTabs() {
   });
 }
 
-
 // 通用事件绑定函数，兼容原生和 jQuery
 function bindPjaxEvent() {
   // 优先使用原生 addEventListener
   if (document.addEventListener) {
-    document.addEventListener('pjax:complete', initializeTabs, false);
+    document.addEventListener('pjax:complete', function() {
+      if (document.querySelector('.tabs')) {
+        initializeTabs();
+      }
+    }, false);
   } 
   // 回退到 jQuery（如果项目中使用 jQuery 且 pjax 依赖 jQuery）
   else if (typeof jQuery !== 'undefined') {
-    $(document).on('pjax:complete', initializeTabs);
+    $(document).on('pjax:complete', function() {
+      if ($('.tabs').length > 0) {
+        initializeTabs();
+      }
+    });
   } 
   // 如果两者都不支持，记录错误
   else {
@@ -89,8 +96,11 @@ function bindPjaxEvent() {
 function init() {
   // 绑定 pjax 事件
   bindPjaxEvent();
-  // 初次页面加载时调用
-  initializeTabs();
+  
+  // 初次页面加载时调用（带条件判断）
+  if (document.querySelector('.tabs') || (typeof jQuery !== 'undefined' && $('.tabs').length > 0)) {
+    initializeTabs();
+  }
 }
 
 // 在 DOM 加载完成后执行
@@ -102,4 +112,25 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
   if (typeof jQuery !== 'undefined') {
     $(document).ready(init);
   }
+}
+
+// 添加其他事件监听（带条件判断）
+if (typeof jQuery !== 'undefined') {
+  $(document).ready(function() {
+    if ($('.tabs').length > 0) {
+      initializeTabs();
+    }
+  });
+
+  $(document).on('contentLoaded', function() {
+    if ($('.tabs').length > 0) {
+      initializeTabs();
+    }
+  });
+
+  $(document).on('pjax:end', function() {
+    if ($('.tabs').length > 0) {
+      initializeTabs();
+    }
+  });
 }
