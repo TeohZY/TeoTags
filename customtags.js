@@ -68,69 +68,56 @@ function initializeTabs() {
   });
 }
 
-// 通用事件绑定函数，兼容原生和 jQuery
-function bindPjaxEvent() {
-  // 优先使用原生 addEventListener
+/**
+ * 优化后的通用事件绑定和初始化逻辑
+ */
+
+// 缓存 jQuery 对象（如果存在）
+const $document = typeof jQuery !== 'undefined' ? $(document) : null;
+
+// 统一的事件绑定函数
+function bindEvents() {
+  // 原生事件绑定
   if (document.addEventListener) {
-    document.addEventListener('pjax:complete', function() {
-      if (document.querySelector('.tabs')) {
-        initializeTabs();
-      }
-    }, false);
-  } 
-  // 回退到 jQuery（如果项目中使用 jQuery 且 pjax 依赖 jQuery）
-  else if (typeof jQuery !== 'undefined') {
-    $(document).on('pjax:complete', function() {
-      if ($('.tabs').length > 0) {
+    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('pjax:complete', initializeTabs);
+    document.addEventListener('contentLoaded', initializeTabs);
+  }
+  
+  // jQuery 事件绑定（如果可用）
+  if ($document) {
+    $document.ready(init);
+    $document.on('pjax:complete pjax:end contentLoaded', function(event) {
+      // 对于 pjax:end 事件，检查是否有 tabs 元素
+      if (event.type === 'pjax:end') {
+        if ($('.tabs').length > 0) {
+          initializeTabs();
+        }
+      } else {
         initializeTabs();
       }
     });
-  } 
-  // 如果两者都不支持，记录错误
-  else {
-    console.warn('无法绑定 pjax:complete 事件，缺少 addEventListener 或 jQuery');
   }
-}
-
-// 确保初次加载和 pjax 加载都触发
-function init() {
-  // 绑定 pjax 事件
-  bindPjaxEvent();
   
-  // 初次页面加载时调用（带条件判断）
-  if (document.querySelector('.tabs') || (typeof jQuery !== 'undefined' && $('.tabs').length > 0)) {
-    initializeTabs();
+  // 如果两者都不支持，记录警告
+  if (!document.addEventListener && !$document) {
+    console.warn('无法绑定事件，缺少 addEventListener 或 jQuery');
   }
 }
 
-// 在 DOM 加载完成后执行
+// 初始化函数
+function init() {
+  initializeTabs();
+}
+
+// 根据当前文档状态立即执行或等待加载
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   init();
 } else {
-  document.addEventListener('DOMContentLoaded', init, false);
-  // 兼容 jQuery 的 DOM 加载
-  if (typeof jQuery !== 'undefined') {
-    $(document).ready(init);
-  }
+  bindEvents();
 }
 
-// 添加其他事件监听（带条件判断）
-if (typeof jQuery !== 'undefined') {
-  $(document).ready(function() {
-    if ($('.tabs').length > 0) {
-      initializeTabs();
-    }
-  });
-
-  $(document).on('contentLoaded', function() {
-    if ($('.tabs').length > 0) {
-      initializeTabs();
-    }
-  });
-
-  $(document).on('pjax:end', function() {
-    if ($('.tabs').length > 0) {
-      initializeTabs();
-    }
-  });
+// 确保至少执行一次初始化
+if (document.body) {
+  init();
 }
