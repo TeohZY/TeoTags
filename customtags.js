@@ -1,3 +1,15 @@
+$(document).ready(function() {
+  initializeTabs();
+});
+
+$(document).on('contentLoaded', function() {
+  initializeTabs();
+});
+$(document).on('pjax:end', function() {
+  if ($('.tabs').length > 0) {
+    initializeTabs();
+  }
+});
 
 
 function initializeTabs() {
@@ -68,48 +80,38 @@ function initializeTabs() {
   });
 }
 
-/**
- * 优化后的 PJAX 兼容初始化代码
- */
-(function() {
-  // 缓存 jQuery 对象（如果存在）
-  const $document = typeof jQuery !== 'undefined' ? $(document) : null;
-  
-  // 主初始化函数
-  function initialize() {
-    // 确保 DOM 已加载
-    if (!document.body) return;
-    
-    // 检查是否有需要初始化的元素
-    if ($document && $('.tabs').length > 0 || document.querySelector('.tabs')) {
-      initializeTabs();
-    }
+
+// 通用事件绑定函数，兼容原生和 jQuery
+function bindPjaxEvent() {
+  // 优先使用原生 addEventListener
+  if (document.addEventListener) {
+    document.addEventListener('pjax:complete', initializeTabs, false);
+  } 
+  // 回退到 jQuery（如果项目中使用 jQuery 且 pjax 依赖 jQuery）
+  else if (typeof jQuery !== 'undefined') {
+    $(document).on('pjax:complete', initializeTabs);
+  } 
+  // 如果两者都不支持，记录错误
+  else {
+    console.warn('无法绑定 pjax:complete 事件，缺少 addEventListener 或 jQuery');
   }
-  
-  // 绑定 PJAX 相关事件
-  function bindPjaxEvents() {
-    // 原生事件绑定
-    if (document.addEventListener) {
-      document.addEventListener('DOMContentLoaded', initialize);
-      document.addEventListener('pjax:complete', initialize);
-      document.addEventListener('pjax:end', initialize);
-      document.addEventListener('contentLoaded', initialize);
-    }
-    
-    // jQuery 事件绑定（如果可用）
-    if ($document) {
-      $document.ready(initialize);
-      $document.on('pjax:complete pjax:end contentLoaded', initialize);
-    }
+}
+
+// 确保初次加载和 pjax 加载都触发
+function init() {
+  // 绑定 pjax 事件
+  bindPjaxEvent();
+  // 初次页面加载时调用
+  initializeTabs();
+}
+
+// 在 DOM 加载完成后执行
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  init();
+} else {
+  document.addEventListener('DOMContentLoaded', init, false);
+  // 兼容 jQuery 的 DOM 加载
+  if (typeof jQuery !== 'undefined') {
+    $(document).ready(init);
   }
-  
-  // 立即执行或等待加载
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initialize();
-  } else {
-    bindPjaxEvents();
-  }
-  
-  // 确保至少执行一次初始化
-  setTimeout(initialize, 100);
-})();
+}
